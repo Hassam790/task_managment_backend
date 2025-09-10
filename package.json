@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node dist/main.js",
+    "prestart": "npm run build",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main.js",
     "postinstall": "",
