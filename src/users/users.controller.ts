@@ -20,6 +20,12 @@ export class UsersController {
     return user;
   }
 
+  @Get()
+  @Roles(Role.Admin)
+  async listUsers() {
+    return this.usersService.findAll();
+  }
+
   @Put(':id')
   @Roles(Role.Admin)
   async updateUser(@Param('id') id: string, @Body() dto: UpdateUserDto) {

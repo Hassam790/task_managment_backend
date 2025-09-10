@@ -1,9 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcryptjs';
+import { Role } from '../common/enums/role.enum';
 
 @Injectable()
 export class UsersService {
@@ -20,6 +21,11 @@ export class UsersService {
 
   async findByEmail(email: string): Promise<User | null> {
     return this.usersRepo.findOne({ where: { email } });
+  }
+
+  async findAll(): Promise<Array<Pick<User, 'id' | 'name' | 'email' | 'role'>>> {
+    const users = await this.usersRepo.find({ where: { role: Not(Role.Admin) } });
+    return users.map((u) => ({ id: u.id, name: u.name, email: u.email, role: u.role }));
   }
 
   async create(data: { name: string; email: string; password: string; role?: User['role'] }): Promise<User> {
