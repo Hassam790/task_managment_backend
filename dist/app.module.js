@@ -18,16 +18,34 @@ const baseImports = [
     config_1.ConfigModule.forRoot({ isGlobal: true }),
     typeorm_1.TypeOrmModule.forRootAsync({
         inject: [config_1.ConfigService],
-        useFactory: (config) => ({
-            type: 'postgres',
-            host: config.get('POSTGRES_HOST', 'localhost'),
-            port: parseInt(config.get('POSTGRES_PORT', '5432'), 10),
-            username: config.get('POSTGRES_USER', 'postgres'),
-            password: config.get('POSTGRES_PASSWORD', 'postgres'),
-            database: config.get('POSTGRES_DB', 'tasks_db'),
-            autoLoadEntities: true,
-            synchronize: config.get('NODE_ENV') !== 'production',
-        }),
+        useFactory: (config) => {
+            const isProd = config.get('NODE_ENV') === 'production';
+            const databaseUrl = config.get('DATABASE_URL');
+            const sslEnv = config.get('POSTGRES_SSL');
+            const pgSslMode = config.get('PGSSLMODE');
+            const urlHasRequire = databaseUrl === null || databaseUrl === void 0 ? void 0 : databaseUrl.includes('sslmode=require');
+            const enableSsl = sslEnv === 'true' || pgSslMode === 'require' || !!urlHasRequire;
+            if (databaseUrl) {
+                return {
+                    type: 'postgres',
+                    url: databaseUrl,
+                    ssl: enableSsl ? { rejectUnauthorized: false } : undefined,
+                    autoLoadEntities: true,
+                    synchronize: !isProd,
+                };
+            }
+            return {
+                type: 'postgres',
+                host: config.get('POSTGRES_HOST', 'localhost'),
+                port: parseInt(config.get('POSTGRES_PORT', '5432'), 10),
+                username: config.get('POSTGRES_USER', 'postgres'),
+                password: config.get('POSTGRES_PASSWORD', 'postgres'),
+                database: config.get('POSTGRES_DB', 'tasks_db'),
+                ssl: enableSsl ? { rejectUnauthorized: false } : undefined,
+                autoLoadEntities: true,
+                synchronize: !isProd,
+            };
+        },
     }),
     users_module_1.UsersModule,
     tasks_module_1.TasksModule,
