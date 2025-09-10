@@ -26,7 +26,7 @@ const baseImports = [
             password: config.get('POSTGRES_PASSWORD', 'postgres'),
             database: config.get('POSTGRES_DB', 'tasks_db'),
             autoLoadEntities: true,
-            synchronize: true,
+            synchronize: config.get('NODE_ENV') !== 'production',
         }),
     }),
     users_module_1.UsersModule,
