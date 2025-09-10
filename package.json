@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "Real-Time Collaborative Task Management System (NestJS, TypeORM, PostgreSQL, MongoDB, WebSockets)",
   "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "start": "nest start",
+    "start": "node dist/main.js",
+    "prestart": "npm run build",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main.js",
     "build": "nest build",
