@@ -9,6 +9,7 @@
   "scripts": {
     "start": "node dist/main.js",
     "prestart": "npm run build",
+    "prestart:dev": "rm -rf dist tsconfig.build.tsbuildinfo",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main.js",
     "postinstall": "",
